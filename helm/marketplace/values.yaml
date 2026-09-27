@@ -1,0 +1,109 @@
+global:
+  imageRegistry: ghcr.io/marketplace
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  namespace: marketplace-production
+  logFormat: json
+  awsRegion: us-east-1
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+services:
+  - name: api-gateway
+    port: 8080
+    replicas: 3
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: auth-service
+    port: 8081
+    replicas: 3
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: backend-api
+    port: 8082
+    replicas: 4
+    cpuRequest: 200m
+    memoryRequest: 256Mi
+    cpuLimit: "1"
+    memoryLimit: 1Gi
+  - name: payment-service
+    port: 8083
+    replicas: 3
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: notification-service
+    port: 8084
+    replicas: 2
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: realtime-service
+    port: 8085
+    replicas: 3
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: communication-service
+    port: 8086
+    replicas: 3
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: customer-app
+    port: 3000
+    replicas: 3
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: professional-app
+    port: 3001
+    replicas: 3
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+  - name: admin-dashboard
+    port: 3002
+    replicas: 2
+    cpuRequest: 100m
+    memoryRequest: 128Mi
+    cpuLimit: 500m
+    memoryLimit: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 70
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    api: api.marketplace.example.com
+    customer: marketplace.example.com
+    professional: professionals.marketplace.example.com
+    admin: admin.marketplace.example.com
+  tlsSecretName: marketplace-tls
+
+externalSecrets:
+  enabled: true
+  storeName: marketplace-secrets
+  secretName: marketplace-runtime-secrets
+  awsSecretPrefix: marketplace/production
+
+networkPolicy:
+  enabled: true

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: marketplace-runtime
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "marketplace.labels" . | nindent 4 }}
+data:
+  NODE_ENV: {{ ternary "production" "staging" (eq .Values.global.namespace "marketplace-production") | quote }}
+  LOG_FORMAT: {{ .Values.global.logFormat | quote }}
+  OTEL_SERVICE_NAMESPACE: marketplace
+  AWS_REGION: {{ .Values.global.awsRegion | quote }}
+  DATABASE_SSL_MODE: require
+  REDIS_TLS: "true"

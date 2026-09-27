@@ -1,0 +1,38 @@
+global:
+  imageTag: latest
+  namespace: marketplace-development
+services:
+  - name: api-gateway
+    port: 8080
+    replicas: 1
+  - name: auth-service
+    port: 8081
+    replicas: 1
+  - name: backend-api
+    port: 8082
+    replicas: 1
+  - name: payment-service
+    port: 8083
+    replicas: 1
+  - name: notification-service
+    port: 8084
+    replicas: 1
+  - name: realtime-service
+    port: 8085
+    replicas: 1
+  - name: communication-service
+    port: 8086
+    replicas: 1
+  - name: customer-app
+    port: 3000
+    replicas: 1
+  - name: professional-app
+    port: 3001
+    replicas: 1
+  - name: admin-dashboard
+    port: 3002
+    replicas: 1
+autoscaling:
+  enabled: false
+externalSecrets:
+  enabled: false

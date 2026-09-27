@@ -1,0 +1,8 @@
+global:
+  imageTag: latest
+  namespace: marketplace-staging
+autoscaling:
+  minReplicas: 2
+  maxReplicas: 10
+externalSecrets:
+  awsSecretPrefix: marketplace/staging

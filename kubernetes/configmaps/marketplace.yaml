@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: marketplace-runtime
+  namespace: marketplace-production
+data:
+  NODE_ENV: production
+  LOG_FORMAT: json
+  OTEL_SERVICE_NAMESPACE: marketplace
+  AWS_REGION: us-east-1
+  DATABASE_SSL_MODE: require
+  REDIS_TLS: "true"
+  SERVICE_DISCOVERY_DOMAIN: marketplace-production.svc.cluster.local
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: marketplace-runtime
+  namespace: marketplace-staging
+data:
+  NODE_ENV: staging
+  LOG_FORMAT: json
+  OTEL_SERVICE_NAMESPACE: marketplace
+  AWS_REGION: us-east-1
+  DATABASE_SSL_MODE: require
+  REDIS_TLS: "true"
+  SERVICE_DISCOVERY_DOMAIN: marketplace-staging.svc.cluster.local

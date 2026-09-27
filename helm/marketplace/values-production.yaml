@@ -1,0 +1,9 @@
+global:
+  imageTag: latest
+  namespace: marketplace-production
+autoscaling:
+  minReplicas: 3
+  maxReplicas: 30
+  targetCPUUtilizationPercentage: 65
+externalSecrets:
+  awsSecretPrefix: marketplace/production
