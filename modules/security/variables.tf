@@ -1,5 +1,10 @@
-variable "project" { type = string }
-variable "environment" { type = string }
+variable "project" {
+  type = string
+}
+
+variable "environment" {
+  type = string
+}
 
 variable "waf_rate_limit" {
   description = "Maximum requests per 5-minute window per IP before blocking"
@@ -8,12 +13,11 @@ variable "waf_rate_limit" {
 }
 
 variable "config_s3_bucket" {
-   = "S3 bucket name for AWS Config delivery channel"
-  type   description     = string
+  description = "S3 bucket name for AWS Config delivery channel"
+  type        = string
 }
 
 variable "tags" {
   type    = map(string)
   default = {}
 }
-
