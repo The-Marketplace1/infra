@@ -27,7 +27,9 @@ resource "aws_wafv2_web_acl" "cloudfront" {
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
     priority = 1
-    override_action { none {} }
+    override_action {
+      none {}
+    }
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
@@ -45,7 +47,9 @@ resource "aws_wafv2_web_acl" "cloudfront" {
   rule {
     name     = "AWSManagedRulesKnownBadInputsRuleSet"
     priority = 2
-    override_action { none {} }
+    override_action {
+      none {}
+    }
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesKnownBadInputsRuleSet"
@@ -63,7 +67,9 @@ resource "aws_wafv2_web_acl" "cloudfront" {
   rule {
     name     = "AWSManagedRulesSQLiRuleSet"
     priority = 3
-    override_action { none {} }
+    override_action {
+      none {}
+    }
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesSQLiRuleSet"
@@ -151,4 +157,3 @@ resource "aws_guardduty_detector" "this" {
   enable = true
   tags   = var.tags
 }
-
