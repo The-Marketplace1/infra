@@ -87,7 +87,9 @@ resource "aws_wafv2_web_acl" "cloudfront" {
   rule {
     name     = "RateLimit"
     priority = 4
-    action { block {} }
+    action {
+      block {}
+    }
     statement {
       rate_based_statement {
         limit              = var.waf_rate_limit
