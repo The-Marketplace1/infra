@@ -17,7 +17,8 @@ require_cmd() {
 }
 
 echo "Checking repository structure..."
-"$ROOT/tests/structure.sh"
+# FIX: Explicitly call bash to avoid 'Permission denied (exit code 126)'
+bash "$ROOT/tests/structure.sh"
 
 if require_cmd terraform; then
   terraform -chdir="$ROOT/environments/development" fmt -check -recursive
