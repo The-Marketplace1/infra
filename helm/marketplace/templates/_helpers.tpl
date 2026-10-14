@@ -22,13 +22,17 @@ Create a default fully qualified app name.
 {{- end }}
 
 {{/*
-Create the name of the service account to use
+Create the name of the service account to use (Bulletproof Fallback)
 */}}
 {{- define "marketplace.serviceAccountName" -}}
-{{- if and .Values.serviceAccount .Values.serviceAccount.create }}
-{{- default (include "marketplace.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.serviceAccount }}
+  {{- if .Values.serviceAccount.create }}
+    {{- default (include "marketplace.fullname" .) .Values.serviceAccount.name }}
+  {{- else }}
+    {{- default "default" .Values.serviceAccount.name }}
+  {{- end }}
 {{- else }}
-{{- default "default" (nested .Values "serviceAccount" "name") }}
+  {{- "default" }}
 {{- end }}
 {{- end }}
 
