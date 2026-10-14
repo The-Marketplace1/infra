@@ -37,11 +37,10 @@ Create the name of the service account to use (Bulletproof Fallback)
 {{- end }}
 
 {{/*
-Common labels
+Common labels (Cleaned to remove duplicate app.kubernetes.io/name errors)
 */}}
 {{- define "marketplace.labels" -}}
 helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{ include "marketplace.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
