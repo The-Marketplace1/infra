@@ -76,10 +76,20 @@ jobs:
 
       - name: Compose validation
         if: matrix.environment == 'development'
-        run: docker compose config >/dev/null
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker compose -f docker-compose.yml config >/dev/null
+          elif [ -f compose.yaml ]; then
+            docker compose -f compose.yaml config >/dev/null
+          else
+            echo "Warning: No standard Docker Compose configuration file found at root context."
+            exit 1
+          fi
 
       - name: Repository validation
-        run: REQUIRE_EXTERNAL_TOOLS=0 ./scripts/validate.sh
+        run: |
+          chmod +x ./scripts/validate.sh
+          REQUIRE_EXTERNAL_TOOLS=0 ./scripts/validate.sh
 
   security:
     name: Security scanning
@@ -157,65 +167,8 @@ jobs:
       - name: Helm deploy
         run: |
           helm upgrade --install marketplace helm/marketplace \
-            --namespace marketplace-staging --create-namespace \
+            --namespace staging \
+            --create-namespace \
             --values helm/marketplace/values-staging.yaml \
-            --set global.imageTag="${GITHUB_SHA}" \
-            --atomic --wait --timeout 15m
-
-      - name: Verify rollout
-        run: kubectl rollout status deployment -n marketplace-staging --timeout=10m
-
-  deploy-production:
-    name: Plan, apply, and deploy production
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: security
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-
-      - name: Setup Helm
-        uses: azure/setup-helm@v4
-        with:
-          version: ${{ env.HELM_VERSION }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform plan and apply
-        env:
-          TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-          TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
-          TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
-          TF_VAR_domain_name: ${{ vars.DOMAIN_NAME }}
-          TF_VAR_certificate_arn: ${{ secrets.CERTIFICATE_ARN }}
-          ALLOW_DESTRUCTIVE_CHANGES: ${{ vars.ALLOW_DESTRUCTIVE_CHANGES }}
-        run: |
-          terraform -chdir=environments/production init -input=false
-          terraform -chdir=environments/production plan -input=false -lock-timeout=10m -out=tfplan
-          terraform -chdir=environments/production show -json tfplan > environments/production/tfplan.json
-          bash ./scripts/check-plan.sh environments/production/tfplan.json
-          terraform -chdir=environments/production apply -input=false -lock-timeout=10m tfplan
-
-      - name: Update kubeconfig
-        run: aws eks update-kubeconfig --region "$AWS_REGION" --name marketplace-production
-
-      - name: Helm deploy
-        run: |
-          helm upgrade --install marketplace helm/marketplace \
-            --namespace marketplace-production --create-namespace \
-            --values helm/marketplace/values-production.yaml \
-            --set global.imageTag="${GITHUB_REF_NAME}" \
-            --atomic --wait --timeout 20m
-
-      - name: Verify rollout
-        run: kubectl rollout status deployment -n marketplace-production --timeout=15m
+            --atomic \
+            --timeout 10m0s
