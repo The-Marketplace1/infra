@@ -15,7 +15,7 @@ provider "aws" {
 # WAF WebACL (attached to CloudFront — must be us-east-1)
 ################################################################################
 resource "aws_wafv2_web_acl" "cloudfront" {
-  provider = aws.us_east_1
+  provider = "aws.us_east_1"
   name     = "${local.name}-cf-waf"
   scope    = "CLOUDFRONT"
 
